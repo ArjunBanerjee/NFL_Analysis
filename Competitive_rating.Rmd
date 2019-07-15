@@ -1,0 +1,319 @@
+---
+title: "Has The Salary Cap Resulted in a More Competitve NFL?"
+author: "Arjun"
+date: "July 10, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r echo = FALSE, results= "hide"}
+library(XML)
+library(xml2)
+library(rvest)
+library(magrittr)
+```
+
+```{r echo = FALSE, results= "hide"}
+wins = c()
+year = c()
+Every_record = data.frame(wins,year)
+foot = "https://www.pro-football-reference.com/years/"
+lab = "/#NFC::none"
+Every_record
+
+```
+
+```{r echo = FALSE, results= "hide"}
+seasons = seq(1978,2018)
+for(i in seasons){
+  urls = paste0(foot,i,lab)
+  file_names = paste0(i, "-nfl-records.html")
+  download.file(urls,file_names)
+  records = readHTMLTable(file_names)
+  afc = records$AFC$W
+  afc = afc[is.na(afc)==FALSE]
+  afc = as.numeric(as.character(afc))
+  nfc = records$NFC$W
+  nfc= nfc[is.na(nfc) == FALSE]
+  nfc = as.numeric(as.character(nfc))
+  wins = c(afc,nfc)
+  year = rep(i, length(wins))
+  that_season = data.frame(wins,year)
+  Every_record = rbind(Every_record,that_season)
+}
+```
+
+
+```{r echo = FALSE, results= "hide"}
+foot = "https://www.pro-football-reference.com/years/"
+year = 2018
+nfc = "/#NFC::none"
+download.file(paste0(foot,year,nfc), "2018-nfc-records.html")
+records = readHTMLTable("2018-nfc-records.html")
+afc = records$AFC$W
+afc = afc[is.na(afc)==FALSE]
+afc = as.numeric(as.character(afc))
+nfc = records$NFC$W
+nfc= nfc[is.na(nfc) == FALSE]
+nfc = as.numeric(as.character(nfc))
+wins = c(afc,nfc)
+year = rep(2018, length(wins))
+that_season = data.frame(wins,year)
+that_season
+write.csv(Every_record, file = "Every-NFL-Record-in-the SBE.csv")
+```
+
+```{r echo = FALSE, results= "hide"}
+library(dplyr)
+```
+
+```{r echo = FALSE, results= "hide"}
+Every_record = Every_record %>% filter(year != 1982) %>% filter(year != 1987)
+```
+
+
+```{r echo = FALSE, results= "hide"}
+Freq = c()
+wins = c()
+year = c()
+all_frequencies = data.frame(wins, Freq, year)
+```
+
+```{r echo = FALSE, results= "hide"}
+for (i in 1978:1981){
+  season = Every_record %>% filter(year == i)
+  frequency = data.frame(table(season$wins))
+  frequency$year = i
+  frequency$Freq = frequency$Freq/length(season$wins)
+  all_frequencies = rbind(all_frequencies,frequency)
+}
+
+for (i in 1983:1986){
+  season = Every_record %>% filter(year == i)
+  frequency = data.frame(table(season$wins))
+  frequency$year = i
+  frequency$Freq = frequency$Freq/length(season$wins)
+  all_frequencies = rbind(all_frequencies,frequency)
+}
+
+for (i in 1988:2018){
+  season = Every_record %>% filter(year == i)
+  frequency = data.frame(table(season$wins))
+  frequency$year = i
+  frequency$Freq = frequency$Freq/length(season$wins)
+  all_frequencies = rbind(all_frequencies,frequency)
+}
+
+all_frequencies$salary_cap = all_frequencies$year >= 1994
+all_frequencies$position = all_frequencies$year - 1977
+all_frequencies$Freq = all_frequencies$Freq * 32
+```
+
+```{r echo = FALSE, results= "hide"}
+W0 = all_frequencies %>% filter(Var1 == 0)
+holder = data.frame(Var1 = 0, Freq = 0, year = seasons[-W0$position])
+holder$salary_cap = holder$year >= 1994
+holder$position = holder$year -1977
+W0 = rbind(W0, holder)
+
+W1 = all_frequencies %>% filter(Var1 == 1)
+holder = data.frame(Var1 = 1, Freq = 0, year = seasons[-W1$position])
+holder$salary_cap = holder$year >= 1994
+holder$position = holder$year -1977
+W1 = rbind(W1, holder)
+
+W2 = all_frequencies %>% filter(Var1 == 2)
+holder = data.frame(Var1 = 2, Freq = 0, year = seasons[-W2$position])
+holder$salary_cap = holder$year >= 1994
+holder$position = holder$year -1977
+W2 = rbind(W2, holder)
+
+W3 = all_frequencies %>% filter(Var1 == 3)
+holder = data.frame(Var1 = 3, Freq = 0, year = seasons[-W3$position])
+holder$salary_cap = holder$year >= 1994
+holder$position = holder$year -1977
+W3 = rbind(W3, holder)
+
+W4 = all_frequencies %>% filter(Var1 == 4)
+holder = data.frame(Var1 = 4, Freq = 0, year = seasons[-W4$position])
+holder$salary_cap = holder$year >= 1994
+holder$position = holder$year -1977
+W4 = rbind(W4, holder)
+
+W5 = all_frequencies %>% filter(Var1 == 5)
+holder = data.frame(Var1 = 5, Freq = 0, year = seasons[-W5$position])
+holder$salary_cap = holder$year >= 1994
+holder$position = holder$year -1977
+W5 = rbind(W5, holder)
+
+W6 = all_frequencies %>% filter(Var1 == 6)
+holder = data.frame(Var1 = 6, Freq = 0, year = seasons[-W6$position])
+holder$salary_cap = holder$year >= 1994
+holder$position = holder$year -1977
+W6 = rbind(W6, holder)
+
+W7 = all_frequencies %>% filter(Var1 == 7)
+holder = data.frame(Var1 = 7, Freq = 0, year = seasons[-W7$position])
+holder$salary_cap = holder$year >= 1994
+holder$position = holder$year -1977
+W7 = rbind(W7, holder)
+
+W8 = all_frequencies %>% filter(Var1 == 8)
+holder = data.frame(Var1 = 8, Freq = 0, year = seasons[-W8$position])
+holder$salary_cap = holder$year >= 1994
+holder$position = holder$year -1977
+W8 = rbind(W8, holder)
+
+W9 = all_frequencies %>% filter(Var1 == 9)
+holder = data.frame(Var1 = 9, Freq = 0, year = seasons[-W9$position])
+holder$salary_cap = holder$year >= 1994
+holder$position = holder$year -1977
+W9 = rbind(W9, holder)
+
+W10 = all_frequencies %>% filter(Var1 == 10)
+holder = data.frame(Var1 = 10, Freq = 0, year = seasons[-W10$position])
+holder$salary_cap = holder$year >= 1994
+holder$position = holder$year -1977
+W10 = rbind(W10, holder)
+
+W11 = all_frequencies %>% filter(Var1 == 11)
+holder = data.frame(Var1 = 11, Freq = 0, year = seasons[-W11$position])
+holder$salary_cap = holder$year >= 1994
+holder$position = holder$year -1977
+W11 = rbind(W11, holder)
+
+W12 = all_frequencies %>% filter(Var1 == 12)
+holder = data.frame(Var1 = 12, Freq = 0, year = seasons[-W12$position])
+holder$salary_cap = holder$year >= 1994
+holder$position = holder$year -1977
+W12 = rbind(W12, holder)
+
+W13 = all_frequencies %>% filter(Var1 == 13)
+holder = data.frame(Var1 = 13, Freq = 0, year = seasons[-W13$position])
+holder$salary_cap = holder$year >= 1994
+holder$position = holder$year -1977
+W13 = rbind(W13, holder)
+
+W14 = all_frequencies %>% filter(Var1 == 14)
+holder = data.frame(Var1 = 14, Freq = 0, year = seasons[-W14$position])
+holder$salary_cap = holder$year >= 1994
+holder$position = holder$year -1977
+W14 = rbind(W14, holder)
+
+W15 = all_frequencies %>% filter(Var1 == 15)
+holder = data.frame(Var1 = 15, Freq = 0, year = seasons[-W15$position])
+holder$salary_cap = holder$year >= 1994
+holder$position = holder$year -1977
+W15 = rbind(W15, holder)
+
+W16 = all_frequencies %>% filter(Var1 == 16)
+holder = data.frame(Var1 = 16, Freq = 0, year = seasons[-W16$position])
+holder$salary_cap = holder$year >= 1994
+holder$position = holder$year -1977
+W16 = rbind(W16, holder)
+```
+
+```{r echo = FALSE, results= "hide"}
+library(ggplot2)
+```
+```{r echo=FALSE, results="hide"}
+ELO = read.csv("nfl_elo.csv", header = TRUE, na.strings = " ")
+#16 game season ELO
+ELO_use = ELO %>% filter(season >= 1966)
+highest_rating = c()
+for (i in 1:12453){
+  hrating = max(ELO_use[i,c(9,10)])
+  highest_rating = c(highest_rating,hrating) 
+}
+ELO_use$win_probability = highest_rating
+```
+
+```{r echo = FALSE, results = "hide"}
+win_prob_over_time = ELO_use %>% group_by(season) %>% summarise(mean = mean(win_probability), standard_deviation = sd(win_probability))
+win_prob_over_time$salary_cap = win_prob_over_time$season >=1994
+```
+  In 1994, the NFL introduced a salary cap, as a counterbalance to the introduction of free agency just a few years prior. The idea was that good players would get paid a lot and since there was a limit on how much you could pay someone, a team could not afford to have too many good players not on their rookie contract. So good players would move from a team with too many good players to teams with too few. This constant churning would ideally prevent dynasties and make the league more equal. That was the thinking in 1994, now in 2019 we can say with certainty that it did not prevent dynasties, more specifically one dynasty. Since 2001, a mere 7 years after the introduction of the salary cap, the Patriots began arguably the greatest dynasty of the Super Bowl era in which they won 6 Super Bowls in 19 years, and who knows how many more they will win. But dynasty prevention aside, after all Bill Belichick and Tom Brady are the greatest Coach-QB duo ever (I'm Niners fan so I'll say Walsh-Montana to myself, but come on), did the salary cap make the league more competitive?
+
+  We'll start by looking at the ELO rating of every team from every game in the Super Bowl era. ELO is perfect for this because it is calculated based on who won and by how much, which is basically all we look at when viewers assess the competitiveness of a game. FiveThirtyEight has helpfully collected all of this data complete with the ELO win probability of every game since the 1920's in [this spreadsheet](https://github.com/fivethirtyeight/data/tree/master/nfl-elo). 
+
+  In addition to ELO, FiveThirtyEight calculates the win probability of every team in every game using the ELO metric. If the salary cap made the NFL have more parity, you would expect the average win probability to move towards .5.
+```{r echo = FALSE}
+ggplot() +geom_line(data = win_prob_over_time, aes(x = season, y = mean)) + ylim(.2,.8)+xlim(1966,2018) +geom_hline(yintercept = .5, linetype = "dashed", color = "red") +geom_vline(xintercept = 1994, color = "blue")+labs(x = "Season", y = "Average Win Probability Accordin to ELO" ,title = "Average Win Probability of the Better Team by Year")
+```
+  
+  Instead we saw that there was virtually no change in the average win probability of a given year after the institution of the salary cap. However, a simple t-test showed that there was a slight, but statistically significant change. What that means is that we can say with 95% certainty that the true difference in mean is likely between two tenths of a percent and about one percent. So while we cannot say there is definitively zero effect, we can say there is virtually no effect, as a one percent difference in win probability amounts to very little. For all the years in the Super Bowl era we found that the average win probability for the favored team was around 65%. But maybe the salary cap led to less lopsided games. Even though they hovered around 65%, maybe there were less games with something like an 80% win probability.
+```{r echo= FALSE, results = "hide"}
+t.test(win_prob_over_time$mean~win_prob_over_time$salary_cap)
+t.test(win_prob_over_time$standard_deviation~win_prob_over_time$salary_cap)
+```
+
+```{r echo = FALSE}
+ggplot() +geom_line(data = win_prob_over_time, aes(x = season, y = standard_deviation)) + ylim(0,.2) +xlim(1978,2018)  +geom_vline(xintercept = 1994, color = "blue")+labs(x = "Season", y = "Standard Deviation of Win Probability Accordin to ELO" ,title = "Standard Deviation of the Win Probability of the Better Team")
+```
+  
+  The graph above shows this is not true. We once again see no difference in the spread of win probabilities, and a simple t-test showed that this there was no statistical difference in the standard deviation of the win probability. The data shows that the gap between the better team and the worse team did not shrink substantially, and there was very little difference in the spread of the gap.
+
+ But 538's predictions are not fact, so maybe the salary cap led to an increase in upsets, which would imply that despite there being being little difference in the pre-game gap between the two teams, previous week's results would be less predictive of any given week. That would show the NFL got more competitve. 
+ 
+  For our purposes, we'll define an upset as a game where one team had a higher than .5 predicted win probability and lost. 
+```{r echo = FALSE, results = "hide"}
+ELO_use$upset = (ELO_use$elo_prob1>.5 & ELO_use$score1<ELO_use$score2)|(ELO_use$elo_prob1<.5 & ELO_use$score1>ELO_use$score2)
+Upsets = ELO_use %>% group_by(season) %>% summarise(Average = mean(upset))
+Upsets$salary_cap = Upsets$season >= 1994
+```
+
+```{r echo = FALSE}
+ggplot() + geom_line(data = Upsets, aes(x = season, y = Average)) +labs(x = "season", y = "Percentage of Games That Were Upsets") + geom_vline(xintercept = 1994, color = "blue")
+```
+  Here we see an obvious difference. The salary cap era appears to have more upsets than the previous era. A t-test showed that there is a statistically significant difference with upsets being about 3% more likley in the salary cap era. So that does bode well for the NFL's efforts to increase competitiveness. And while three percent may not seem like much, as it only translates to about 5 more upsets a year, it is something. 
+  To see if this has any reflection on the actual records of teams, our final piece of analysis will look at the frequencies of various records. In a more competitive league we would expect records to converge to 8-8 and outlier seasons like 13-3 become less frequent. For this analysis we only looked at the 16 game season era which started in 1978, and we normalized all results to a 32 team league
+  
+```{r echo = FALSE, results = "hide"}
+t.test(Upsets$Average~Upsets$salary_cap)
+```
+```{r echo = FALSE}
+ggplot() + geom_line(data = W8, aes(x = year, y= Freq)) + labs(x = "Season", y = "Number of teams with 8 wins", title = "Frequency of 8 Win Teams Over Time") + geom_vline(xintercept = 1994, color = "blue")
+```
+Once again we see little evidence for the salary cap's effect. No discernible pattern emerges and a t-test showed no effect from the salary cap. This was true for all win counts except for the 13 win teams which were show to be slightly more likely in the salary cap era, counter to what we would expect. If you want to see what the other graphs of the win counts, they're at the bottom of this article. 
+
+All in all, it appears as if the salary cap had little effect on the gap between teams performance. There were just as many bottom dwelling teams in 1978 as there are today. The salary cap did not result in the expansion of the NFL's middle class on a season to season level. However, to the salary cap's credit, it may be true that the salary cap led to more variation from year to year. We'll investigate that in a later post.
+```{r echo = FALSE, results= "hide"}
+t.test(W1$Freq~W1$salary_cap)
+t.test(W2$Freq~W2$salary_cap)
+t.test(W3$Freq~W3$salary_cap)
+t.test(W4$Freq~W4$salary_cap)
+t.test(W5$Freq~W5$salary_cap)
+t.test(W6$Freq~W6$salary_cap)
+t.test(W7$Freq~W7$salary_cap)
+t.test(W8$Freq~W8$salary_cap)
+t.test(W9$Freq~W9$salary_cap)
+t.test(W10$Freq~W10$salary_cap)
+t.test(W11$Freq~W11$salary_cap)
+t.test(W12$Freq~W12$salary_cap)
+t.test(W13$Freq~W13$salary_cap)
+t.test(W14$Freq~W14$salary_cap)
+t.test(W15$Freq~W15$salary_cap)
+
+```
+
+```{r echo = FALSE}
+ggplot() + geom_line(data = W1, aes(x = year, y= Freq)) + labs(x = "Season", y = "Number of teams with 1 wins", title = "Frequency of 1 Win Teams Over Time") + geom_vline(xintercept = 1994, color = "blue")
+ggplot() + geom_line(data = W2, aes(x = year, y= Freq)) + labs(x = "Season", y = "Number of teams with 2 wins", title = "Frequency of 2 Win Teams Over Time") + geom_vline(xintercept = 1994, color = "blue")
+ggplot() + geom_line(data = W3, aes(x = year, y= Freq)) + labs(x = "Season", y = "Number of teams with 3 wins", title = "Frequency of 3 Win Teams Over Time") + geom_vline(xintercept = 1994, color = "blue")
+ggplot() + geom_line(data = W4, aes(x = year, y= Freq)) + labs(x = "Season", y = "Number of teams with 4 wins", title = "Frequency of 4 Win Teams Over Time") + geom_vline(xintercept = 1994, color = "blue")
+ggplot() + geom_line(data = W5, aes(x = year, y= Freq)) + labs(x = "Season", y = "Number of teams with 5 wins", title = "Frequency of 5 Win Teams Over Time") + geom_vline(xintercept = 1994, color = "blue")
+ggplot() + geom_line(data = W6, aes(x = year, y= Freq)) + labs(x = "Season", y = "Number of teams with 6 wins", title = "Frequency of 6 Win Teams Over Time") + geom_vline(xintercept = 1994, color = "blue")
+ggplot() + geom_line(data = W7, aes(x = year, y= Freq)) + labs(x = "Season", y = "Number of teams with 7 wins", title = "Frequency of 7 Win Teams Over Time") + geom_vline(xintercept = 1994, color = "blue")
+ggplot() + geom_line(data = W9, aes(x = year, y= Freq)) + labs(x = "Season", y = "Number of teams with 9 wins", title = "Frequency of 9 Win Teams Over Time") + geom_vline(xintercept = 1994, color = "blue")
+ggplot() + geom_line(data = W10, aes(x = year, y= Freq)) + labs(x = "Season", y = "Number of teams with 10 wins", title = "Frequency of 10 Win Teams Over Time") + geom_vline(xintercept = 1994, color = "blue")
+ggplot() + geom_line(data = W11, aes(x = year, y= Freq)) + labs(x = "Season", y = "Number of teams with 11 wins", title = "Frequency of 11 Win Teams Over Time") + geom_vline(xintercept = 1994, color = "blue")
+ggplot() + geom_line(data = W12, aes(x = year, y= Freq)) + labs(x = "Season", y = "Number of teams with 12 wins", title = "Frequency of 12 Win Teams Over Time") + geom_vline(xintercept = 1994, color = "blue")
+ggplot() + geom_line(data = W13, aes(x = year, y= Freq)) + labs(x = "Season", y = "Number of teams with 13 wins", title = "Frequency of 13 Win Teams Over Time") + geom_vline(xintercept = 1994, color = "blue")
+ggplot() + geom_line(data = W14, aes(x = year, y= Freq)) + labs(x = "Season", y = "Number of teams with 14 wins", title = "Frequency of 14 Win Teams Over Time") + geom_vline(xintercept = 1994, color = "blue")
+ggplot() + geom_line(data = W15, aes(x = year, y= Freq)) + labs(x = "Season", y = "Number of teams with 15 wins", title = "Frequency of 15 Win Teams Over Time") + geom_vline(xintercept = 1994, color = "blue")
+ggplot() + geom_line(data = W16, aes(x = year, y= Freq)) + labs(x = "Season", y = "Number of teams with 16 wins", title = "Frequency of 16 Win Teams Over Time") + geom_vline(xintercept = 1994, color = "blue")
+```
